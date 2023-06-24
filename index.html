@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,15 @@
 <body>
     <div id="origin-img">upload image here</div>
     <img id="preview">
+    <p id="mosaic-dot-value">pixel size:</p>
+    <input id="mosaic-dot" type="range" min="5" max="40">    
+    <button id="convert-btn">convert</button>
+
+
     <p id="origin-img-name"></p>
+
+
+    <canvas id="dotImg"></canvas>
     <script src="script.js"></script>
-    <button>dot</button>
 </body>
 </html>
