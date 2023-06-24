@@ -1,7 +1,12 @@
 let OriginImg = document.getElementById('origin-img');
 let preview = document.getElementById('preview');
 let ConvBtn = document.getElementById('convert-btn');
+let DownloadBtn = document.getElementById("download-btn");
+let isImageConverted = false; // 画像変換フラグを初期状態（未変換）に設定
 let img = new Image();
+let dot = document.getElementById('mosaic-dot');
+let OriginImgName = document.getElementById('origin-img-name');
+
 
 // dragover時のイベント設定
 OriginImg.addEventListener('dragover', function(e) {
@@ -19,8 +24,8 @@ OriginImg.addEventListener('drop', function (e) {
     e.stopPropagation();
     e.preventDefault();
     // pタグにDOM操作で画像名をテキストに指定
-    document.getElementById('origin-img-name').textContent = e.dataTransfer.files[0].name;
-	
+    OriginImgName.textContent = e.dataTransfer.files[0].name;
+	document.getElementById('mosaic-dot-value').textContent = "pixel size:20";
     // ファイルの非同期読み込みを行うためのFileReaderオブジェクトの作成
     const reader = new FileReader();
 
@@ -29,8 +34,8 @@ OriginImg.addEventListener('drop', function (e) {
             const imgDataURL = e.target.result;
             preview.src = imgDataURL;
             img.src = imgDataURL;
-            preview.width = "300";
-            preview.height = "300";
+            preview.width = 300;
+            preview.height = 300;
             };
                 // ファイルの非同期読み込み
                 reader.readAsDataURL(e.dataTransfer.files[0]);
@@ -41,22 +46,24 @@ ConvBtn.addEventListener('click', function(e) {
     // canvas要素の取得
     const canvas = document.getElementById('dotImg');
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
     // Canvasのサイズを画像サイズに合わせる
     canvas.width = img.width;
     canvas.height = img.height;
     // 画像をCanvasに描画
     ctx.drawImage(img, 0, 0);
+
     let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     if (imgData) {
-        let mosaic_dot = parseInt(document.getElementById('mosaic-dot').value, 10);
-        console.log(mosaic_dot);
+        let mosaic_dot = parseInt(dot.value, 10);
         //縦のモザイク処理
         for (let y = 0; y < imgData.height; y += mosaic_dot) {
             //横のモザイク処理
             for (let x = 0; x < imgData.width; x += mosaic_dot) {
                 // 1ピクセル=4要素なので、4要素ずつ処理
+                // mosaic_dot分割した後の左上のピクセルの色のインデックス
                 let i = (y * imgData.width + x) * 4;
-                // 1ピクセルのRGB値を取得
+                // mosaic_dot分割した後の左上のピクセルのRGBA値を適用
                 for (let dy = 0; dy < mosaic_dot && y + dy < imgData.height; dy++) {
                     for (let dx = 0; dx < mosaic_dot && x + dx < imgData.width; dx++) {
                         let j = ((y + dy) * imgData.width + (x + dx)) * 4;
@@ -70,6 +77,7 @@ ConvBtn.addEventListener('click', function(e) {
         }
         // モザイク化した画像データをCanvasに適用
         ctx.putImageData(imgData, 0, 0);
+        isImageConverted = true; // 画像変換フラグを変換済みに設定
     }
 });
 
@@ -78,3 +86,21 @@ document.getElementById('mosaic-dot').addEventListener('input', function(e) {
     // pタグにDOM操作で値をテキストに指定
     document.getElementById('mosaic-dot-value').textContent = `pixel size:${e.target.value}`;
 });
+// ダウンロードボタン押下時のイベント設定
+DownloadBtn.addEventListener('click', function(e) {
+    // 画像が変換されていなければダウンロード処理を実行しない
+    if (!isImageConverted) {
+        return;
+    }
+    let OriginImgNameWithoutPng = OriginImgName.textContent.split(".")[0];
+    let dataURL = document.getElementById('dotImg').toDataURL();
+    if (dataURL === "") {
+        return;
+    } else {
+        let link = document.createElement('a');
+        link.href = dataURL;
+        link.download = `${OriginImgNameWithoutPng}_${dot.value}pixel.png`;
+        link.click();
+    }
+});
+
