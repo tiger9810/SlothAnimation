@@ -161,25 +161,7 @@ document.getElementById('animation-btn').addEventListener('click', function(e) {
 
         movedImg = document.getElementById('AnimationImg');
         isAnimeConverted = true; // 画像変換フラグを変換済みに設定
-
-        let gif = new GIF({
-            workers: 2,
-            quality: 10,
-        });
-
-        gif.addFrame(convertedImg, { delay: 1000 });
-        gif.addFrame(movedImg, { delay: 1000 });
-
-        gif.on('finished', function(blob) {
-            let imgElement = document.createElement('img');
-            imgElement.src = URL.createObjectURL(blob);
-            document.body.appendChild(imgElement);
-        });
-
-        gif.render();
-        
-    });
-
+});
 
     // ダウンロードボタン押下時のイベント設定
     const DownloadAnimationBtn = document.getElementById('download-ani')
@@ -199,6 +181,3 @@ document.getElementById('animation-btn').addEventListener('click', function(e) {
     link.click();
     }
 });
-
-
-
