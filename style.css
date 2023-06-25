@@ -1,4 +1,12 @@
 #dotImg {
     width: 300px;
-    height: 300px;
+    height: auto;
+}
+#AnimationImg {
+    width: 300px;
+    height: auto;
+}
+#preview {
+    width: 300px;
+    height: auto;
 }
