@@ -7,6 +7,29 @@ let img = new Image();
 let dot = document.getElementById('mosaic-dot');
 let OriginImgName = document.getElementById('origin-img-name');
 
+// ユーザーが選択したファイルを取得
+const FileImg = document.getElementById("file-input");
+// ファイルが選択された時のイベント設定
+FileImg.addEventListener('change', function(e) {
+    const selectImg = e.target.value;
+    // ファイルが選択されていなければ処理を終了
+    if (!selectImg) {
+        return;
+    }
+    // ファイルの非同期読み込みを行うためのFileReaderオブジェクトの作成
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        const imgDataURL = e.target.result;
+        // pタグにDOM操作で画像名をテキストに指定
+        document.getElementById('mosaic-dot-value').textContent = "pixel size:20";
+        preview.src = imgDataURL;
+        img.src = imgDataURL;
+        preview.width = 300;
+        preview.height = 300;
+    }
+    // ファイルの非同期読み込み
+    reader.readAsDataURL(e.target.files[0]);
+});
 
 // dragover時のイベント設定
 OriginImg.addEventListener('dragover', function(e) {

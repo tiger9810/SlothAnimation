@@ -9,13 +9,18 @@
     <title>Sloth-dot</title>
 </head>
 <body>
+    <!-- drag & dropで画像をアップロードする -->
     <div id="origin-img">upload image here</div>
     <img id="preview">
+
     <p id="mosaic-dot-value">pixel size:</p>
-    <input id="mosaic-dot" type="range" min="5" max="40" value="20">    
+    <input id="mosaic-dot" type="range" min="5" max="40" value="20">
+  
 
     <button id="convert-btn">convert</button>
     <button id="download-btn" href="#">download</button>
+        <!-- フォルダからファイルを選んで画像をアップロードする -->
+        <input type="file" id="file-input" accept="image/*">  
     <p id="origin-img-name"></p>
 
     <canvas id="dotImg"></canvas>
