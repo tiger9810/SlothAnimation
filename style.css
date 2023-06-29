@@ -1,12 +1,4 @@
-#dotImg {
-    width: 300px;
-    height: auto;
-}
-#AnimationImg {
-    width: 300px;
-    height: auto;
-}
-#preview {
+#dotImg, #AnimationImg, #preview, #dotAnimationImg {
     width: 300px;
     height: auto;
 }

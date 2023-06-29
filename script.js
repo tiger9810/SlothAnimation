@@ -9,7 +9,7 @@ let OriginImgName = document.getElementById('origin-img-name');
 let isImageConverted = false; // 画像変換フラグを初期状態（未変換）に設定
 let isAnimeConverted = false;// 画像変換フラグを初期状態（未変換）に設定
 let img = new Image();
-let convertedImg, movedImg;
+let dotImgData;
 
 // ユーザーが選択したファイルを取得
 const FileImg = document.getElementById("file-input");
@@ -66,19 +66,25 @@ OriginImg.addEventListener('drop', function (e) {
                 reader.readAsDataURL(e.dataTransfer.files[0]);
         });
 
+const dotAnimationImg = document.getElementById('dotAnimationImg');
+const dotAnimationImgCtx = dotAnimationImg.getContext('2d', { willReadFrequently: true });
+let dotAnimationImgData;
+
 // 変換ボタン押下時のイベント設定
 ConvBtn.addEventListener('click', function(e) {
     // canvas要素の取得
-    const canvas = document.getElementById('dotImg');
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    const dotImg = document.getElementById('dotImg');
+    const dotImgCtx = dotImg.getContext('2d', { willReadFrequently: true });
+
 
     // Canvasのサイズを画像サイズに合わせる
-    canvas.width = img.width;
-    canvas.height = img.height;
-    // 画像をCanvasに描画
-    ctx.drawImage(img, 0, 0);
+    dotImg.width = img.width;
+    dotImg.height = img.height;
 
-    let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    // 画像をCanvasに描画
+    dotImgCtx.drawImage(img, 0, 0);
+
+    let imgData = dotImgCtx.getImageData(0, 0, dotImg.width, dotImg.height);
     if (imgData) {
 
         let mosaic_dot = parseInt(dot.value, 10);
@@ -102,8 +108,9 @@ ConvBtn.addEventListener('click', function(e) {
             }
         }
         // モザイク化した画像データをCanvasに適用
-        ctx.putImageData(imgData, 0, 0);
-        convertedImg = document.getElementById('dotImg');
+        dotImgCtx.putImageData(imgData, 0, 0);
+        // dotAnimationImgCtx.putImageData(imgData, 0, 0);
+        dotAnimationImgData = imgData;
         isImageConverted = true; // 画像変換フラグを変換済みに設定
     }
 });
@@ -145,21 +152,27 @@ document.getElementById('animation').addEventListener('input', function(e) {
 // animation-btnを押した時に画像を任意ピクセル分上に移動させた画像を作成するイベント設定
 document.getElementById('animation-btn').addEventListener('click', function(e) {
         // canvas要素の取得
-        const canvas = document.getElementById('AnimationImg');
-        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        const AnimationImg = document.getElementById('AnimationImg');
+        const AnimationImgCtx = AnimationImg.getContext('2d', { willReadFrequently: true });
     
         // Canvasのサイズを画像サイズに合わせる
-        canvas.width = img.width;
-        canvas.height = img.height;
+        AnimationImg.width = img.width;
+        AnimationImg.height = img.height;
+
+        // Canvasのサイズを画像サイズに合わせる
+        dotAnimationImg.width = img.width;
+        dotAnimationImg.height = img.height;
+
         // 画像をCanvasに描画
-        ctx.drawImage(img, 0, 0);
+        AnimationImgCtx.drawImage(img, 0, 0);
+
 
         let animationMove = -parseInt(animation.value, 10);
         // 任意pixel画像を上に移動させた画像データを作成
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, animationMove); 
+        AnimationImgCtx.clearRect(0, 0, AnimationImg.width, AnimationImg.height);
+        AnimationImgCtx.drawImage(img, 0, animationMove); 
+        dotAnimationImgCtx.putImageData(dotAnimationImgData, 0, animationMove);
 
-        movedImg = document.getElementById('AnimationImg');
         isAnimeConverted = true; // 画像変換フラグを変換済みに設定
 });
 
@@ -168,6 +181,7 @@ document.getElementById('animation-btn').addEventListener('click', function(e) {
     DownloadAnimationBtn.addEventListener('click', function(e) {
     // 画像が変換されていなければダウンロード処理を実行しない
     if (!isAnimeConverted) {
+        
         return;
     }
     // ダウンロードリンクを作成し、クリックイベントを発火させる
