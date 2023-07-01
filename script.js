@@ -1,20 +1,42 @@
-let OriginImg = document.getElementById('origin-img');
-let preview = document.getElementById('preview');
-let ConvBtn = document.getElementById('convert-btn');
-let DownloadBtn = document.getElementById("download-btn");
-let dot = document.getElementById('mosaic-dot');
-let animation = document.getElementById('animation');
-let OriginImgName = document.getElementById('origin-img-name');
-
 let isImageConverted = false; // 画像変換フラグを初期状態（未変換）に設定
 let isAnimeConverted = false;// 画像変換フラグを初期状態（未変換）に設定
 let img = new Image();
 let dotImgData;
 
-// ユーザーが選択したファイルを取得
-const FileImg = document.getElementById("file-input");
+function downloadImage() {
+    // ダウンロード用のaタグを生成し、クリックイベントを発生させる
+    const a = document.createElement('a');
+    a.href = dotAnimationImg.toDataURL('image/png');
+    a.download = 'mosaic.png';
+    a.click();
+}
+
+// Idから要素を取得して、変数に代入する関数
+function getId(id) {
+    return document.getElementById(id);
+}
+
+// ダウンロードリンクを作成し、クリックイベントを発火させる関数
+function downloadLink(canvasId, inputValue, text) {
+    let url = getId(canvasId).toDataURL();
+    let link = document.createElement('a');
+    if (url === "") {
+        return;
+    } else {
+        link.href = url;
+        link.download = `${getId('origin-img-name').textContent.split(".")[0]}_${getId(inputValue).value}${text}.png`;
+        link.click();
+    }
+}
+
+// pタグにDOM操作でpixel sizeをテキストに指定する関数
+function setPixelText(pId, text) {
+    getId(pId).textContent = text;
+}
+
+
 // ファイルが選択された時のイベント設定
-FileImg.addEventListener('change', function(e) {
+getId("file-input").addEventListener('change', function(e) {
     const selectImg = e.target.value;
     // ファイルが選択されていなければ処理を終了
     if (!selectImg) {
@@ -24,19 +46,20 @@ FileImg.addEventListener('change', function(e) {
     const reader = new FileReader();
     reader.onload = function (e) {
         const imgDataURL = e.target.result;
-        // pタグにDOM操作で画像名をテキストに指定
-        document.getElementById('mosaic-dot-value').textContent = "pixel size:20";
-        preview.src = imgDataURL;
+        getId('preview').src = imgDataURL;
         img.src = imgDataURL;
+        // pタグにDOM操作でpixel sizeをテキストに指定
+        setPixelText('mosaic-dot-value', 'pixel size:20');
+        setPixelText('animation-value', 'animation:20');
     }
     // ファイルの非同期読み込み
     reader.readAsDataURL(e.target.files[0]);
     // pタグにDOM操作で画像名をテキストに指定
-    OriginImgName.textContent = e.target.files[0].name;
+    getId('origin-img-name').textContent = e.target.files[0].name;
 });
 
 // dragover時のイベント設定
-OriginImg.addEventListener('dragover', function(e) {
+getId('origin-img').addEventListener('dragover', function(e) {
     // eventの伝搬停止とブラウザのデフォルト動作の防止
     e.stopPropagation();
     e.preventDefault();
@@ -46,36 +69,36 @@ OriginImg.addEventListener('dragover', function(e) {
 });
 
 // drop時のイベント設定
-OriginImg.addEventListener('drop', function (e) {
+getId('origin-img').addEventListener('drop', function (e) {
     // eventの伝搬停止とブラウザのデフォルト動作の防止
     e.stopPropagation();
     e.preventDefault();
     // pタグにDOM操作で画像名をテキストに指定
-    OriginImgName.textContent = e.dataTransfer.files[0].name;
-	document.getElementById('mosaic-dot-value').textContent = "pixel size:20";
+    getId('origin-img-name').textContent = e.dataTransfer.files[0].name;
+    setPixelText('mosaic-dot-value', 'pixel size:20');
+    setPixelText('animation-value', 'animation:20');
     // ファイルの非同期読み込みを行うためのFileReaderオブジェクトの作成
     const reader = new FileReader();
 
     // 読み込み完了時の処理
         reader.onload = function (e) {
             const imgDataURL = e.target.result;
-            preview.src = imgDataURL;
+            getId('preview').src = imgDataURL;
             img.src = imgDataURL;
             };
                 // ファイルの非同期読み込み
                 reader.readAsDataURL(e.dataTransfer.files[0]);
         });
 
-const dotAnimationImg = document.getElementById('dotAnimationImg');
+const dotAnimationImg = getId('dotAnimationImg');
 const dotAnimationImgCtx = dotAnimationImg.getContext('2d', { willReadFrequently: true });
 let dotAnimationImgData;
 
 // 変換ボタン押下時のイベント設定
-ConvBtn.addEventListener('click', function(e) {
+getId('convert-btn').addEventListener('click', function(e) {
     // canvas要素の取得
-    const dotImg = document.getElementById('dotImg');
+    const dotImg = getId('dotImg');
     const dotImgCtx = dotImg.getContext('2d', { willReadFrequently: true });
-
 
     // Canvasのサイズを画像サイズに合わせる
     dotImg.width = img.width;
@@ -87,7 +110,7 @@ ConvBtn.addEventListener('click', function(e) {
     let imgData = dotImgCtx.getImageData(0, 0, dotImg.width, dotImg.height);
     if (imgData) {
 
-        let mosaic_dot = parseInt(dot.value, 10);
+        let mosaic_dot = parseInt(getId('mosaic-dot').value, 10);
         //縦のモザイク処理
         for (let y = 0; y < imgData.height; y += mosaic_dot) {
             //横のモザイク処理
@@ -109,50 +132,46 @@ ConvBtn.addEventListener('click', function(e) {
         }
         // モザイク化した画像データをCanvasに適用
         dotImgCtx.putImageData(imgData, 0, 0);
-        // dotAnimationImgCtx.putImageData(imgData, 0, 0);
         dotAnimationImgData = imgData;
         isImageConverted = true; // 画像変換フラグを変換済みに設定
     }
 });
 
-// input(range)の値が変更された時のイベント設定
-document.getElementById('mosaic-dot').addEventListener('input', function(e) {
-    // pタグにDOM操作で値をテキストに指定
-    document.getElementById('mosaic-dot-value').textContent = `pixel size:${e.target.value}`;
-});
+// input(range)が変更さえた時のイベント設定関数
+function inputRangeEvent(inputId, pId, text) {
+    document.getElementById(inputId).addEventListener('input', function(e) {
+        // pタグにDOM操作で値をテキストに指定
+        document.getElementById(pId).textContent = `${text}:${e.target.value}`;
+    });
+}
 
+// input(range)が変更さえた時のイベント
+inputRangeEvent('mosaic-dot', 'mosaic-dot-value', 'pixel size');
+inputRangeEvent('animation', 'animation-value', 'moved');
 
-// ダウンロードボタン押下時のイベント設定
-DownloadBtn.addEventListener('click', function(e) {
+// download-btn押下時のイベント設定
+getId("download-btn").addEventListener('click', function(e) {
     // 画像が変換されていなければダウンロード処理を実行しない
     if (!isImageConverted) {
-        console.log(e);
         return;
     }
-    let OriginImgNameWithoutPng = OriginImgName.textContent.split(".")[0];
-    let dataURL = document.getElementById('dotImg').toDataURL();
-    if (dataURL === "") {
+    downloadLink('dotImg', 'mosaic-dot', 'pixel_size');
+});
+
+// download-aniボタン押下時のイベント設定
+getId('download-ani').addEventListener('click', function(e) {
+    // 画像が変換されていなければダウンロード処理を実行しない
+    if (!isAnimeConverted) {
         return;
-    } else {
-        let link = document.createElement('a');
-        link.href = dataURL;
-        link.download = `${OriginImgNameWithoutPng}_${dot.value}pixel.png`;
-        link.click();
     }
+    downloadLink('AnimationImg', 'animation', 'pixel-moved');
 });
 
-
-
-// Animationのinput(range)の値が変更された時のイベント設定
-document.getElementById('animation').addEventListener('input', function(e) {
-    // pタグにDOM操作で値をテキストに指定
-    document.getElementById('animation-value').textContent = `animation:${e.target.value}`;
-});
 
 // animation-btnを押した時に画像を任意ピクセル分上に移動させた画像を作成するイベント設定
-document.getElementById('animation-btn').addEventListener('click', function(e) {
+getId('animation-btn').addEventListener('click', function(e) {
         // canvas要素の取得
-        const AnimationImg = document.getElementById('AnimationImg');
+        const AnimationImg = getId('AnimationImg');
         const AnimationImgCtx = AnimationImg.getContext('2d', { willReadFrequently: true });
     
         // Canvasのサイズを画像サイズに合わせる
@@ -166,32 +185,11 @@ document.getElementById('animation-btn').addEventListener('click', function(e) {
         // 画像をCanvasに描画
         AnimationImgCtx.drawImage(img, 0, 0);
 
-
-        let animationMove = -parseInt(animation.value, 10);
+        let animationMove = -parseInt(getId('animation').value, 10);
         // 任意pixel画像を上に移動させた画像データを作成
         AnimationImgCtx.clearRect(0, 0, AnimationImg.width, AnimationImg.height);
         AnimationImgCtx.drawImage(img, 0, animationMove); 
         dotAnimationImgCtx.putImageData(dotAnimationImgData, 0, animationMove);
 
         isAnimeConverted = true; // 画像変換フラグを変換済みに設定
-});
-
-    // ダウンロードボタン押下時のイベント設定
-    const DownloadAnimationBtn = document.getElementById('download-ani')
-    DownloadAnimationBtn.addEventListener('click', function(e) {
-    // 画像が変換されていなければダウンロード処理を実行しない
-    if (!isAnimeConverted) {
-        
-        return;
-    }
-    // ダウンロードリンクを作成し、クリックイベントを発火させる
-    let url2 = document.getElementById('AnimationImg').toDataURL();
-    const link = document.createElement('a');
-    if (url2 === "") {
-        return;
-    } else {
-    link.href = url2;
-    link.download = `${OriginImgName.textContent.split(".")[0]}_${animation.value}pixel-moved.png`;
-    link.click();
-    }
 });
