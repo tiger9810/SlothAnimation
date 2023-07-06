@@ -1,4 +1,4 @@
-#dotImg, #AnimationImg, #preview, #dotAnimationImg {
+#canvas-origin, #dotImg, #AnimationImg, #preview, #dotAnimationImg, #aniApng {
     width: 300px;
     height: auto;
 }

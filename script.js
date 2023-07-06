@@ -3,13 +3,13 @@ let isAnimeConverted = false;// 画像変換フラグを初期状態（未変換
 let img = new Image();
 let dotImgData;
 
-function downloadImage() {
-    // ダウンロード用のaタグを生成し、クリックイベントを発生させる
-    const a = document.createElement('a');
-    a.href = dotAnimationImg.toDataURL('image/png');
-    a.download = 'mosaic.png';
-    a.click();
-}
+// function downloadImage() {
+//     // ダウンロード用のaタグを生成し、クリックイベントを発生させる
+//     const a = document.createElement('a');
+//     a.href = dotAnimationImg.toDataURL('image/png');
+//     a.download = 'mosaic.png';
+//     a.click();
+// }
 
 // Idから要素を取得して、変数に代入する関数
 function getId(id) {
@@ -17,23 +17,68 @@ function getId(id) {
 }
 
 // ダウンロードリンクを作成し、クリックイベントを発火させる関数
-function downloadLink(canvasId, inputValue, text) {
-    let url = getId(canvasId).toDataURL();
-    let link = document.createElement('a');
+function downloadLink(canvasId, inputValue, text, type) {
+    let url = "";
+    
+    if (type === "canvas") {
+        url = getId(canvasId).toDataURL();
+    } else if (type === "img") {
+        url = getId(canvasId).src;
+    }
+
     if (url === "") {
         return;
     } else {
+        let link = document.createElement('a');
         link.href = url;
         link.download = `${getId('origin-img-name').textContent.split(".")[0]}_${getId(inputValue).value}${text}.png`;
         link.click();
     }
 }
 
+
 // pタグにDOM操作でpixel sizeをテキストに指定する関数
 function setPixelText(pId, text) {
     getId(pId).textContent = text;
 }
 
+//canvasに描画する関数
+function drawCanvas(canvasId) {
+    // canvas要素の取得
+    let canvas = document.getElementById(canvasId);
+    let ctx = canvas.getContext('2d', { willReadFrequently: true });
+    canvas.width = img.width;
+    canvas.height = img.height;
+    ctx.drawImage(img, 0, 0);
+    return {canvas: canvas, ctx: ctx};
+}
+
+// canvas画像からアニメーションを作成する関数
+function createAnimation(canvasId1, canvasId2, imgId) {
+    let canvas1 = getId(canvasId1);
+    let canvas2 = getId(canvasId2);
+
+    // ピクセルデータを取得
+    let frames = [getPixelData(canvas1), getPixelData(canvas2)];
+
+    // ピクセルデータをAPNGにエンコード
+    let width = canvas1.width;
+    let height = canvas1.height;
+    let depth = 32;
+    let delay = 300; // 1/100秒単位なので、500ミリ秒は50
+    let png = UPNG.encode(frames, width, height, depth, [delay, delay]);
+
+    // Blobとして取得し、URLを作成
+    let url = URL.createObjectURL(new Blob([png]));
+
+    // img要素を作成してAPNGを表示
+    let animation = document.getElementById(imgId);
+    animation.src = url;
+
+    // Canvas2をクリア
+    let ctx2 = canvas2.getContext('2d');
+    ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+}
 
 // ファイルが選択された時のイベント設定
 getId("file-input").addEventListener('change', function(e) {
@@ -46,10 +91,14 @@ getId("file-input").addEventListener('change', function(e) {
     const reader = new FileReader();
     reader.onload = function (e) {
         const imgDataURL = e.target.result;
-        getId('preview').src = imgDataURL;
+
+        img.onload = function() {
+            // Canvasに描画する関数
+            drawCanvas("canvas-origin");
+        }
         img.src = imgDataURL;
         // pタグにDOM操作でpixel sizeをテキストに指定
-        setPixelText('mosaic-dot-value', 'pixel size:20');
+        setPixelText('mosaic-dot-value', 'pixel size:12');
         setPixelText('animation-value', 'animation:20');
     }
     // ファイルの非同期読み込み
@@ -75,7 +124,7 @@ getId('origin-img').addEventListener('drop', function (e) {
     e.preventDefault();
     // pタグにDOM操作で画像名をテキストに指定
     getId('origin-img-name').textContent = e.dataTransfer.files[0].name;
-    setPixelText('mosaic-dot-value', 'pixel size:20');
+    setPixelText('mosaic-dot-value', 'pixel size:12');
     setPixelText('animation-value', 'animation:20');
     // ファイルの非同期読み込みを行うためのFileReaderオブジェクトの作成
     const reader = new FileReader();
@@ -90,22 +139,15 @@ getId('origin-img').addEventListener('drop', function (e) {
                 reader.readAsDataURL(e.dataTransfer.files[0]);
         });
 
-const dotAnimationImg = getId('dotAnimationImg');
-const dotAnimationImgCtx = dotAnimationImg.getContext('2d', { willReadFrequently: true });
+
 let dotAnimationImgData;
 
-// 変換ボタン押下時のイベント設定
+// convertボタン押下時のイベント設定
 getId('convert-btn').addEventListener('click', function(e) {
     // canvas要素の取得
-    const dotImg = getId('dotImg');
-    const dotImgCtx = dotImg.getContext('2d', { willReadFrequently: true });
-
-    // Canvasのサイズを画像サイズに合わせる
-    dotImg.width = img.width;
-    dotImg.height = img.height;
-
-    // 画像をCanvasに描画
-    dotImgCtx.drawImage(img, 0, 0);
+    const dotCanvas = drawCanvas('dotImg');
+    const dotImg = dotCanvas.canvas
+    const dotImgCtx = dotCanvas.ctx;
 
     let imgData = dotImgCtx.getImageData(0, 0, dotImg.width, dotImg.height);
     if (imgData) {
@@ -146,7 +188,7 @@ function inputRangeEvent(inputId, pId, text) {
 }
 
 // input(range)が変更さえた時のイベント
-inputRangeEvent('mosaic-dot', 'mosaic-dot-value', 'pixel size');
+inputRangeEvent('mosaic-dot', 'mosaic-dot-value', 'pixel dot');
 inputRangeEvent('animation', 'animation-value', 'moved');
 
 // download-btn押下時のイベント設定
@@ -155,7 +197,7 @@ getId("download-btn").addEventListener('click', function(e) {
     if (!isImageConverted) {
         return;
     }
-    downloadLink('dotImg', 'mosaic-dot', 'pixel_size');
+    downloadLink('dotImg', 'mosaic-dot', 'pixel_size', "canvas");
 });
 
 // download-aniボタン押下時のイベント設定
@@ -164,32 +206,38 @@ getId('download-ani').addEventListener('click', function(e) {
     if (!isAnimeConverted) {
         return;
     }
-    downloadLink('AnimationImg', 'animation', 'pixel-moved');
+    //downloadLink(Id, inputValue, text)
+    downloadLink('aniApng', 'animation', 'pixel-moved', "img");
 });
 
+// Canvasからピクセルデータを取得する関数
+function getPixelData(canvas) {
+    let ctx = canvas.getContext('2d');
+    let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    return new Uint8Array(imgData.data.buffer);
+}
 
 // animation-btnを押した時に画像を任意ピクセル分上に移動させた画像を作成するイベント設定
 getId('animation-btn').addEventListener('click', function(e) {
         // canvas要素の取得
-        const AnimationImg = getId('AnimationImg');
-        const AnimationImgCtx = AnimationImg.getContext('2d', { willReadFrequently: true });
-    
-        // Canvasのサイズを画像サイズに合わせる
-        AnimationImg.width = img.width;
-        AnimationImg.height = img.height;
+        const AnimationImg = drawCanvas('AnimationImg').canvas;
+        const AnimationImgCtx = drawCanvas('AnimationImg').ctx;
 
-        // Canvasのサイズを画像サイズに合わせる
-        dotAnimationImg.width = img.width;
-        dotAnimationImg.height = img.height;
-
-        // 画像をCanvasに描画
-        AnimationImgCtx.drawImage(img, 0, 0);
+        const dotAnimationImg = drawCanvas('dotAnimationImg').canvas;
+        const dotAnimationImgCtx = drawCanvas('dotAnimationImg').ctx;
 
         let animationMove = -parseInt(getId('animation').value, 10);
         // 任意pixel画像を上に移動させた画像データを作成
         AnimationImgCtx.clearRect(0, 0, AnimationImg.width, AnimationImg.height);
-        AnimationImgCtx.drawImage(img, 0, animationMove); 
+        // AnimationImgCtx.drawImage(img, 0, animationMove); 
         dotAnimationImgCtx.putImageData(dotAnimationImgData, 0, animationMove);
-
         isAnimeConverted = true; // 画像変換フラグを変換済みに設定
+
+        createAnimation('dotImg', 'dotAnimationImg', 'aniApng');
+        // createAnimation('dotImg', 'dotAnimationImg', 'aniApng');
+        
 });
+
+
+
+
