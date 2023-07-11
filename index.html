@@ -13,6 +13,7 @@
     <!-- drag & dropで画像をアップロードする -->
     <div id="origin-img">upload image here</div>
     <!-- <img id="preview"> -->
+    <canvas id="canvas-origin"></canvas>
     <p id="origin-img-name"></p>
     <p id="mosaic-dot-value">pixel size:</p>
     <input id="mosaic-dot" type="range" min="1" max="40" value="12">
@@ -23,15 +24,19 @@
 
     <button id="convert-btn">convert</button>
     <button id="animation-btn">Animation</button>
-    <button id="download-btn" href="#">download</button>
+    <button id="download-dot" href="#">download-dot</button>
     <button id="download-ani" href="#">download-ani</button>
+    <button id="download-ani-dot" href="#">download-dot-ani</button>
 
 
-    <canvas id="canvas-origin"></canvas>
+
+
     <canvas id="dotImg"></canvas>
+    <img id="dotAniApng">
     <img id="aniApng">
     <canvas id="dotAnimationImg"></canvas>
     <canvas id="AnimationImg"></canvas>
+
 
  
 

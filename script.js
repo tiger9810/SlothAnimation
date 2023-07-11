@@ -191,17 +191,17 @@ function inputRangeEvent(inputId, pId, text) {
 inputRangeEvent('mosaic-dot', 'mosaic-dot-value', 'pixel dot');
 inputRangeEvent('animation', 'animation-value', 'moved');
 
-// download-btn押下時のイベント設定
-getId("download-btn").addEventListener('click', function(e) {
+// download-dot押下時のイベント設定
+getId("download-dot").addEventListener('click', function(e) {
     // 画像が変換されていなければダウンロード処理を実行しない
     if (!isImageConverted) {
         return;
     }
-    downloadLink('dotImg', 'mosaic-dot', 'pixel_size', "canvas");
+    downloadLink('dotImg', 'mosaic-dot', 'pixeldot', "canvas");
 });
 
 // download-aniボタン押下時のイベント設定
-getId('download-ani').addEventListener('click', function(e) {
+getId('download-ani-dot').addEventListener('click', function(e) {
     // 画像が変換されていなければダウンロード処理を実行しない
     if (!isAnimeConverted) {
         return;
@@ -228,14 +228,19 @@ getId('animation-btn').addEventListener('click', function(e) {
 
         let animationMove = -parseInt(getId('animation').value, 10);
         // 任意pixel画像を上に移動させた画像データを作成
-        AnimationImgCtx.clearRect(0, 0, AnimationImg.width, AnimationImg.height);
+        AnimationImgCtx.clearRect(0, 0, AnimationImg.width, AnimationImg.height);    
+
+        dotAnimationImgCtx.clearRect(0, 0, dotAnimationImg.width, dotAnimationImg.height); 
+
         // AnimationImgCtx.drawImage(img, 0, animationMove); 
+        AnimationImgCtx.putImageData(dotAnimationImgData, 0, animationMove);
         dotAnimationImgCtx.putImageData(dotAnimationImgData, 0, animationMove);
+
         isAnimeConverted = true; // 画像変換フラグを変換済みに設定
 
+        createAnimation('canvas-origin', 'AnimationImg', 'aniApng');
         createAnimation('dotImg', 'dotAnimationImg', 'aniApng');
-        // createAnimation('dotImg', 'dotAnimationImg', 'aniApng');
-        
+
 });
 
 
