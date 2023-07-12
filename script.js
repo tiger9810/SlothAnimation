@@ -1,15 +1,7 @@
 let isImageConverted = false; // 画像変換フラグを初期状態（未変換）に設定
-let isAnimeConverted = false;// 画像変換フラグを初期状態（未変換）に設定
+let isAnimeConverted = false; // 画像変換フラグを初期状態（未変換）に設定
 let img = new Image();
 let dotImgData;
-
-// function downloadImage() {
-//     // ダウンロード用のaタグを生成し、クリックイベントを発生させる
-//     const a = document.createElement('a');
-//     a.href = dotAnimationImg.toDataURL('image/png');
-//     a.download = 'mosaic.png';
-//     a.click();
-// }
 
 // Idから要素を取得して、変数に代入する関数
 function getId(id) {
@@ -19,7 +11,7 @@ function getId(id) {
 // ダウンロードリンクを作成し、クリックイベントを発火させる関数
 function downloadLink(canvasId, inputValue, text, type) {
     let url = "";
-    
+
     if (type === "canvas") {
         url = getId(canvasId).toDataURL();
     } else if (type === "img") {
@@ -36,13 +28,12 @@ function downloadLink(canvasId, inputValue, text, type) {
     }
 }
 
-
 // pタグにDOM操作でpixel sizeをテキストに指定する関数
 function setPixelText(pId, text) {
     getId(pId).textContent = text;
 }
 
-//canvasに描画する関数
+// canvasに描画する関数
 function drawCanvas(canvasId) {
     // canvas要素の取得
     let canvas = document.getElementById(canvasId);
@@ -50,7 +41,7 @@ function drawCanvas(canvasId) {
     canvas.width = img.width;
     canvas.height = img.height;
     ctx.drawImage(img, 0, 0);
-    return {canvas: canvas, ctx: ctx};
+    return { canvas: canvas, ctx: ctx };
 }
 
 // canvas画像からアニメーションを作成する関数
@@ -81,7 +72,7 @@ function createAnimation(canvasId1, canvasId2, imgId) {
 }
 
 // ファイルが選択された時のイベント設定
-getId("file-input").addEventListener('change', function(e) {
+getId("file-input").addEventListener('change', function (e) {
     const selectImg = e.target.value;
     // ファイルが選択されていなければ処理を終了
     if (!selectImg) {
@@ -92,11 +83,15 @@ getId("file-input").addEventListener('change', function(e) {
     reader.onload = function (e) {
         const imgDataURL = e.target.result;
 
-        img.onload = function() {
+        img.onload = function () {
             // Canvasに描画する関数
             drawCanvas("canvas-origin");
+
         }
         img.src = imgDataURL;
+        const OriginImg = drawCanvas('canvas-origin').canvas;
+        const OriginImgCtx = drawCanvas('canvas-origin').ctx;
+        OriginCanvasImgData = OriginImgCtx.getImageData(0, 0, OriginImg.width, OriginImg.height);
         // pタグにDOM操作でpixel sizeをテキストに指定
         setPixelText('mosaic-dot-value', 'pixel size:12');
         setPixelText('animation-value', 'animation:20');
@@ -108,7 +103,7 @@ getId("file-input").addEventListener('change', function(e) {
 });
 
 // dragover時のイベント設定
-getId('origin-img').addEventListener('dragover', function(e) {
+getId('origin-img').addEventListener('dragover', function (e) {
     // eventの伝搬停止とブラウザのデフォルト動作の防止
     e.stopPropagation();
     e.preventDefault();
@@ -130,20 +125,21 @@ getId('origin-img').addEventListener('drop', function (e) {
     const reader = new FileReader();
 
     // 読み込み完了時の処理
-        reader.onload = function (e) {
-            const imgDataURL = e.target.result;
-            getId('preview').src = imgDataURL;
-            img.src = imgDataURL;
-            };
-                // ファイルの非同期読み込み
-                reader.readAsDataURL(e.dataTransfer.files[0]);
-        });
+    reader.onload = function (e) {
+        const imgDataURL = e.target.result;
+        getId('preview').src = imgDataURL;
+        img.src = imgDataURL;
+    };
+    // ファイルの非同期読み込み
+    reader.readAsDataURL(e.dataTransfer.files[0]);
+});
 
 
 let dotAnimationImgData;
+let OriginCanvasImgData;
 
 // convertボタン押下時のイベント設定
-getId('convert-btn').addEventListener('click', function(e) {
+getId('convert-btn').addEventListener('click', function (e) {
     // canvas要素の取得
     const dotCanvas = drawCanvas('dotImg');
     const dotImg = dotCanvas.canvas
@@ -181,7 +177,7 @@ getId('convert-btn').addEventListener('click', function(e) {
 
 // input(range)が変更さえた時のイベント設定関数
 function inputRangeEvent(inputId, pId, text) {
-    document.getElementById(inputId).addEventListener('input', function(e) {
+    document.getElementById(inputId).addEventListener('input', function (e) {
         // pタグにDOM操作で値をテキストに指定
         document.getElementById(pId).textContent = `${text}:${e.target.value}`;
     });
@@ -192,7 +188,7 @@ inputRangeEvent('mosaic-dot', 'mosaic-dot-value', 'pixel dot');
 inputRangeEvent('animation', 'animation-value', 'moved');
 
 // download-dot押下時のイベント設定
-getId("download-dot").addEventListener('click', function(e) {
+getId("download-dot").addEventListener('click', function (e) {
     // 画像が変換されていなければダウンロード処理を実行しない
     if (!isImageConverted) {
         return;
@@ -200,14 +196,14 @@ getId("download-dot").addEventListener('click', function(e) {
     downloadLink('dotImg', 'mosaic-dot', 'pixeldot', "canvas");
 });
 
-// download-aniボタン押下時のイベント設定
-getId('download-ani-dot').addEventListener('click', function(e) {
+// download-ani-dotボタン押下時のイベント設定
+getId('download-ani-dot').addEventListener('click', function (e) {
     // 画像が変換されていなければダウンロード処理を実行しない
     if (!isAnimeConverted) {
         return;
     }
-    //downloadLink(Id, inputValue, text)
-    downloadLink('aniApng', 'animation', 'pixel-moved', "img");
+    // downloadLink(Id, inputValue, text)
+    downloadLink('aniApng', 'animation', 'pixel-moving', "img");
 });
 
 // Canvasからピクセルデータを取得する関数
@@ -218,31 +214,36 @@ function getPixelData(canvas) {
 }
 
 // animation-btnを押した時に画像を任意ピクセル分上に移動させた画像を作成するイベント設定
-getId('animation-btn').addEventListener('click', function(e) {
-        // canvas要素の取得
-        const AnimationImg = drawCanvas('AnimationImg').canvas;
-        const AnimationImgCtx = drawCanvas('AnimationImg').ctx;
+getId('animation-btn').addEventListener('click', function (e) {
+    // 任意pixelをユーザーのインプット値から取得
+    let animationMove = -parseInt(getId('animation').value, 10);
 
-        const dotAnimationImg = drawCanvas('dotAnimationImg').canvas;
-        const dotAnimationImgCtx = drawCanvas('dotAnimationImg').ctx;
+    // canvas要素の取得
+    const AnimationImg = drawCanvas('AnimationImg').canvas;
+    const AnimationImgCtx = drawCanvas('AnimationImg').ctx;
 
-        let animationMove = -parseInt(getId('animation').value, 10);
-        // 任意pixel画像を上に移動させた画像データを作成
-        AnimationImgCtx.clearRect(0, 0, AnimationImg.width, AnimationImg.height);    
+    //キャンバスの全領域を透明にクリアにする
+    AnimationImgCtx.clearRect(0, 0, AnimationImg.width, AnimationImg.height);
 
-        dotAnimationImgCtx.clearRect(0, 0, dotAnimationImg.width, dotAnimationImg.height); 
+    // 任意pixel画像を上に移動させた画像データを作成
+    AnimationImgCtx.drawImage(img, 0, animationMove);
+    AnimationImgCtx.putImageData(OriginCanvasImgData, 0, animationMove);
 
-        // AnimationImgCtx.drawImage(img, 0, animationMove); 
-        AnimationImgCtx.putImageData(dotAnimationImgData, 0, animationMove);
-        dotAnimationImgCtx.putImageData(dotAnimationImgData, 0, animationMove);
+    // (元画像、移動後の画像、imgタグ名)
+    createAnimation('canvas-origin', 'AnimationImg', 'aniApng');
 
-        isAnimeConverted = true; // 画像変換フラグを変換済みに設定
+    // canvas要素の取得
+    const dotAnimationImg = drawCanvas('dotAnimationImg').canvas;
+    const dotAnimationImgCtx = drawCanvas('dotAnimationImg').ctx;
 
-        createAnimation('canvas-origin', 'AnimationImg', 'aniApng');
-        createAnimation('dotImg', 'dotAnimationImg', 'aniApng');
+    //キャンバスの全領域を透明にクリアにする
+    dotAnimationImgCtx.clearRect(0, 0, dotAnimationImg.width, dotAnimationImg.height);
 
+    // 任意pixel画像を上に移動させた画像データを作成
+    dotAnimationImgCtx.drawImage(img, 0, animationMove);
+    dotAnimationImgCtx.putImageData(dotAnimationImgData, 0, animationMove);
+
+    isAnimeConverted = true; // 画像変換フラグを変換済みに設定
+    // (元画像、移動後の画像、imgタグ名)
+    createAnimation('dotImg', 'dotAnimationImg', 'dotAniApng');
 });
-
-
-
-
