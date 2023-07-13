@@ -1,5 +1,5 @@
 let isImageConverted = false; // 画像変換フラグを初期状態（未変換）に設定
-let isAnimeConverted = false;// 画像変換フラグを初期状態（未変換）に設定
+let isAnimeConverted = false; // 画像変換フラグを初期状態（未変換）に設定
 let img = new Image();
 let dotImgData;
 
@@ -12,7 +12,7 @@ function getId(id) {
 // ダウンロードリンクを作成し、クリックイベントを発火させる関数
 function downloadLink(canvasId, inputValue, text, type) {
     let url = "";
-    
+
     if (type === "canvas") {
         url = getId(canvasId).toDataURL();
         let link = document.createElement('a');
@@ -30,13 +30,12 @@ function downloadLink(canvasId, inputValue, text, type) {
     }
 }
 
-
 // pタグにDOM操作でpixel sizeをテキストに指定する関数
 function setPixelText(pId, text) {
     getId(pId).textContent = text;
 }
 
-//canvasに描画する関数
+// canvasに描画する関数
 function drawCanvas(canvasId) {
     // canvas要素の取得
     let canvas = document.getElementById(canvasId);
@@ -44,7 +43,7 @@ function drawCanvas(canvasId) {
     canvas.width = img.width;
     canvas.height = img.height;
     ctx.drawImage(img, 0, 0);
-    return {canvas: canvas, ctx: ctx};
+    return { canvas: canvas, ctx: ctx };
 }
 
 // canvas画像からアニメーションを作成する関数
@@ -92,6 +91,9 @@ getId("file-input").addEventListener('change', function(e) {
         }
 
         img.src = imgDataURL;
+        const OriginImg = drawCanvas('canvas-origin').canvas;
+        const OriginImgCtx = drawCanvas('canvas-origin').ctx;
+        OriginCanvasImgData = OriginImgCtx.getImageData(0, 0, OriginImg.width, OriginImg.height);
         // pタグにDOM操作でpixel sizeをテキストに指定
         setPixelText('mosaic-dot-value', 'pixel size:12');
         setPixelText('animation-value', 'animation:20');
@@ -106,9 +108,10 @@ getId("file-input").addEventListener('change', function(e) {
 
 let AnimationImgData;
 let dotAnimationImgData;
+let OriginCanvasImgData;
 
 // convertボタン押下時のイベント設定
-getId('convert-btn').addEventListener('click', function(e) {
+getId('convert-btn').addEventListener('click', function (e) {
     // canvas要素の取得
     const dotCanvas = drawCanvas('dotImg');
     const dotImg = dotCanvas.canvas
@@ -147,7 +150,7 @@ getId('convert-btn').addEventListener('click', function(e) {
 
 // input(range)が変更さえた時のイベント設定関数
 function inputRangeEvent(inputId, pId, text) {
-    document.getElementById(inputId).addEventListener('input', function(e) {
+    document.getElementById(inputId).addEventListener('input', function (e) {
         // pタグにDOM操作で値をテキストに指定
         document.getElementById(pId).textContent = `${text}:${e.target.value}`;
     });
@@ -158,7 +161,7 @@ inputRangeEvent('mosaic-dot', 'mosaic-dot-value', 'pixel dot');
 inputRangeEvent('animation', 'animation-value', 'moved');
 
 // download-dot押下時のイベント設定
-getId("download-dot").addEventListener('click', function(e) {
+getId("download-dot").addEventListener('click', function (e) {
     // 画像が変換されていなければダウンロード処理を実行しない
     if (!isImageConverted) {
         return;
