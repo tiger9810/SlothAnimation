@@ -11,36 +11,36 @@
 <body>    
 
     <!-- drag & dropで画像をアップロードする -->
-    <div id="origin-img">upload image here</div>
+    <!-- <div id="origin-img">upload image here</div> -->
     <!-- <img id="preview"> -->
-    <canvas id="canvas-origin"></canvas>
-    <p id="origin-img-name"></p>
-    <p id="mosaic-dot-value">pixel size:</p>
-    <input id="mosaic-dot" type="range" min="1" max="40" value="12">
-    <p id="animation-value">animation:</p>
-    <input id="animation" type="range" min="-100" max="100" value="20">
-    <!-- フォルダからファイルを選んで画像をアップロードする -->
-    <input type="file" id="file-input" accept="image/*">  
 
+    <!-- フォルダからファイルを選んで画像をアップロードする -->
+
+    <input type="file" id="file-input" accept="image/*">  
     <button id="convert-btn">convert</button>
     <button id="animation-btn">Animation</button>
     <button id="download-dot" href="#">download-dot</button>
     <button id="download-ani" href="#">download-ani</button>
-    <button id="download-ani-dot" href="#">download-dot-ani</button>
+    <button id="download-ani-dot" href="#">download-ani-dot</button>
+
+    <p id="origin-img-name"></p>
+    <p id="mosaic-dot-value">pixel size:</p>
+    <input id="mosaic-dot" type="range" min="1" max="40" value="12">
+    <input id="animation" type="range" min="-100" max="100" value="20">
+    <p id="animation-value">animation:</p>
 
 
-
-
+    <canvas id="canvas-origin"></canvas>
     <canvas id="dotImg"></canvas>
-    <img id="dotAniApng">
-    <img id="aniApng">
-    <canvas id="dotAnimationImg"></canvas>
-    <canvas id="AnimationImg"></canvas>
-
-
- 
-
     
+    <img id="aniApng">
+    <img id="aniDotApng">
+
+    <canvas id="AnimationImg"></canvas>
+    <canvas id="dotAnimationImg"></canvas>
+
+
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.3/pako.min.js"></script>
     <script src="https://unpkg.com/upng-js@2.1.0/UPNG.js"></script>
     <script src="script.js"></script>
