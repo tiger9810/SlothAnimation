@@ -13,39 +13,32 @@
 
 </head>
 <body>    
+  <div class="p-4 ">
+    <h1 class="mb-4 bg-blue-500">Sloth-dot</h1>
+    <input type="file" id="file-input" accept="image/*" class="mb-4 bg-blue-500">  
+    <p id="origin-img-name" class="mb-4 bg-blue-500"></p>
+    <button id="convert-btn" class="mb-4 bg-blue-500">convert</button>
+    <button id="animation-btn" class="mb-4 bg-blue-500">Animation</button>
+    <button id="download-dot" href="#" class="mb-4 bg-blue-500">download-dot</button>
+    <button id="download-ani" href="#" class="mb-4 bg-blue-500">download-ani</button>
+    <button id="download-ani-dot" href="#" class="mb-4 bg-blue-500">download-ani-dot</button>
 
-    <!-- drag & dropで画像をアップロードする -->
-    <!-- <div id="origin-img">upload image here</div> -->
-    <!-- <img id="preview"> -->
+    <p id="mosaic-dot-value" class="mb-4 bg-blue-500">pixel size:</p>
+    <input id="mosaic-dot" type="range" min="1" max="40" value="12" class="mb-4 bg-blue-500">
+    <p id="animation-value" class="mb-4 bg-blue-500">animation:</p>
+    <input id="animation" type="range" min="-100" max="100" value="20" class="mb-4 bg-blue-500">
 
-    <!-- フォルダからファイルを選んで画像をアップロードする -->
+    <canvas id="canvas-origin" class="mb-4 bg-blue-500"></canvas>
 
-    <input type="file" id="file-input" accept="image/*">  
-    <p id="origin-img-name"></p>
-    <button id="convert-btn">convert</button>
-    <button id="animation-btn">Animation</button>
-    <button id="download-dot" href="#">download-dot</button>
-    <button id="download-ani" href="#">download-ani</button>
-    <button id="download-ani-dot" href="#">download-ani-dot</button>
-
-    <p id="mosaic-dot-value">pixel size:</p>
-    <input id="mosaic-dot" type="range" min="1" max="40" value="12">
-    <p id="animation-value">animation:</p>
-    <input id="animation" type="range" min="-100" max="100" value="20">
-
-    <canvas id="canvas-origin"></canvas>
-
-    <canvas id="dotImg"></canvas>
-    <img id="aniApng">
-    <img id="aniDotApng">
-    <canvas id="AnimationImg"></canvas>
-    <canvas id="dotAnimationImg"></canvas>
-
-
+    <canvas id="dotImg" class="mb-4 bg-blue-500"></canvas>
+    <img id="aniApng" class="mb-4 bg-blue-500">
+    <img id="aniDotApng" class="mb-4 bg-blue-500">
+    <canvas id="AnimationImg" class="mb-4 bg-blue-500"></canvas>
+    <canvas id="dotAnimationImg" class="mb-4 bg-blue-500"></canvas>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.3/pako.min.js"></script>
     <script src="https://unpkg.com/upng-js@2.1.0/UPNG.js"></script>
     <script src="script.js"></script>
-
+  </div>
 </body>
 </html>
