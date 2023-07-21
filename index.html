@@ -13,32 +13,30 @@
 
 </head>
 <body>    
-  <div class="p-4 ">
-    <h1 class="mb-4 bg-blue-500">Sloth-dot</h1>
-    <input type="file" id="file-input" accept="image/*" class="mb-4 bg-blue-500">  
-    <p id="origin-img-name" class="mb-4 bg-blue-500"></p>
-    <button id="convert-btn" class="mb-4 bg-blue-500">convert</button>
-    <button id="animation-btn" class="mb-4 bg-blue-500">Animation</button>
-    <button id="download-dot" href="#" class="mb-4 bg-blue-500">download-dot</button>
-    <button id="download-ani" href="#" class="mb-4 bg-blue-500">download-ani</button>
-    <button id="download-ani-dot" href="#" class="mb-4 bg-blue-500">download-ani-dot</button>
-
-    <p id="mosaic-dot-value" class="mb-4 bg-blue-500">pixel size:</p>
-    <input id="mosaic-dot" type="range" min="1" max="40" value="12" class="mb-4 bg-blue-500">
-    <p id="animation-value" class="mb-4 bg-blue-500">animation:</p>
-    <input id="animation" type="range" min="-100" max="100" value="20" class="mb-4 bg-blue-500">
-
-    <canvas id="canvas-origin" class="mb-4 bg-blue-500"></canvas>
-
-    <canvas id="dotImg" class="mb-4 bg-blue-500"></canvas>
-    <img id="aniApng" class="mb-4 bg-blue-500">
-    <img id="aniDotApng" class="mb-4 bg-blue-500">
-    <canvas id="AnimationImg" class="mb-4 bg-blue-500"></canvas>
-    <canvas id="dotAnimationImg" class="mb-4 bg-blue-500"></canvas>
-
+  <div class="relative flex flex-col items-center justify-center py-1 pb-4 gap-y-1 bg-blue-300">
+    <h1 class="bg-indigo-200 w-36 text-center font-bold">Sloth-dot</h1>
+    <input type="file" id="file-input" accept="image/*" class="mt-4 mb-4 ">  
+    <button id="convert-btn" class="w-20 rounded-xl border-2 border-black-900">convert</button>    
+    <canvas id="canvas-origin" class="mb-4 mr-4"></canvas>
+    <canvas id="dotImg" class=""></canvas>
+    <button id="download-dot" href="#" class="justify-center mr-4 border-2 border-black-900 w-20 rounded-xl">download dot</button>
+    <p id="origin-img-name" class=""></p>
+    <p id="mosaic-dot-value" class="mt-4  w-20 text-center">pixel size:</p>
+    <input id="mosaic-dot" type="range" min="1" max="40" value="12" class="mb-4 ">
+    <p id="animation-value" class=" w-20 text-center">animation:</p>
+    <input id="animation" type="range" min="-100" max="100" value="20" class="mb-4 ">
+    <button id="animation-btn" class="mr-4 border-2 border-black-900 w-20 rounded-xl">Animation</button>
+      <img id="aniApng" class="mb-4 mr-4">
+      <button id="download-ani" href="#" class="mr-4 border-2 border-black-900 w-20 rounded-xl">download animation</button>
+      <img id="aniDotApng" class="mb-4">
+      <button id="download-ani-dot" href="#" class="border-2 border-black-900 w-20 rounded-xl">download ani-dot</button>
+      <canvas id="AnimationImg" class="mb-4 hidden"></canvas>
+      <canvas id="dotAnimationImg" class="mb-4 hidden"></canvas>
+    <footer></footer>
+  </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.3/pako.min.js"></script>
     <script src="https://unpkg.com/upng-js@2.1.0/UPNG.js"></script>
     <script src="script.js"></script>
-  </div>
+
 </body>
 </html>
