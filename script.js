@@ -84,24 +84,22 @@ getId("file-input").addEventListener('change', function(e) {
     const reader = new FileReader();
     reader.onload = function (e) {
         const imgDataURL = e.target.result;
-        // pタグにDOM操作でpixel sizeをテキストに指定
+
         setPixelText('mosaic-dot-value', 'pixel dot:12');
         setPixelText('animation-value', 'moved:20');
+
         img.onload = function() {
-            // Canvasに描画する関数
             let CanvasOrigin = drawCanvas("canvas-origin");
             AnimationImgData =CanvasOrigin.ctx.getImageData(0, 0, CanvasOrigin.canvas.width, CanvasOrigin.canvas.height);
+            
+            const OriginImg = drawCanvas('canvas-origin').canvas;
+            const OriginImgCtx = drawCanvas('canvas-origin').ctx;
+            OriginCanvasImgData = OriginImgCtx.getImageData(0, 0, OriginImg.width, OriginImg.height);
         }
 
         img.src = imgDataURL;
-        const OriginImg = drawCanvas('canvas-origin').canvas;
-        const OriginImgCtx = drawCanvas('canvas-origin').ctx;
-        OriginCanvasImgData = OriginImgCtx.getImageData(0, 0, OriginImg.width, OriginImg.height);
     }
-    // ファイルの非同期読み込み
     reader.readAsDataURL(e.target.files[0]);
-    // // pタグにDOM操作で画像名をテキストに指定
-    // getId('origin-img-name').textContent = e.target.files[0].name;
 });
 
 
