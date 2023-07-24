@@ -73,6 +73,12 @@ function createAnimation(canvasId1, canvasId2, imgId) {
     ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
 }
 
+document.getElementById('custom-file-input').addEventListener('click', function() {
+    document.getElementById('file-input').click();
+  });
+  
+
+let selectedFile = null; // 追加: 選択されたファイルを保存するための変数
 // ファイルが選択された時のイベント設定
 getId("file-input").addEventListener('change', function(e) {
     const selectImg = e.target.files;
@@ -80,6 +86,7 @@ getId("file-input").addEventListener('change', function(e) {
     if (!selectImg) {
         return;
     }
+    selectedFile = selectImg[0]; // 追加: 選択されたファイルを保存
     // ファイルの非同期読み込みを行うためのFileReaderオブジェクトの作成
     const reader = new FileReader();
     reader.onload = function (e) {
@@ -95,6 +102,7 @@ getId("file-input").addEventListener('change', function(e) {
             const OriginImg = drawCanvas('canvas-origin').canvas;
             const OriginImgCtx = drawCanvas('canvas-origin').ctx;
             OriginCanvasImgData = OriginImgCtx.getImageData(0, 0, OriginImg.width, OriginImg.height);
+            getId("origin-img-name").textContent = selectImg[0].name;
         }
 
         img.src = imgDataURL;
@@ -103,19 +111,20 @@ getId("file-input").addEventListener('change', function(e) {
 });
 
 
-
 let AnimationImgData;
 let dotAnimationImgData;
 let OriginCanvasImgData;
 
 // convertボタン押下時のイベント設定
 getId('convert-btn').addEventListener('click', function (e) {
+    if (!selectedFile) { // 追加: ファイルが選択されていなければ何もしない
+        return;
+    }
     // canvas要素の取得
     const dotCanvas = drawCanvas('dotImg');
     const dotImg = dotCanvas.canvas
     const dotImgCtx = dotCanvas.ctx;
-// console.log(dotImg.width);
-// console.log(dotImg.height);
+
     let imgData = dotImgCtx.getImageData(0, 0, dotImg.width, dotImg.height);
     if (imgData) {
 
