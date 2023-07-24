@@ -12,13 +12,13 @@
     <title>Sloth-dot</title>
 
 </head>
-<body>    
-  <div class="relative flex flex-col items-center justify-center py-1 pb-4 gap-y-4">
-    <h1 class="bg-indigo-200 w-36 text-center font-bold ">Sloth-dot</h1>
-      <input type="file" id="file-input" accept="image/*" class="hidden">   
-    <div class="relative flex flex-col  items-start justify-center gap-y-1">
+<body>
+  <div class="relative flex flex-col items-center justify-center py-1 pb-4 gap-y-4"> 
+    <div class="relative flex flex-col items-start gap-y-1">
+      <h1 class="text-center pl-2 pb-4 text-4xl">Sloth-dot</h1>
+      <input type="file" id="file-input" accept="image/*" class="hidden"> 
       <div id="custom-file-input" class="rounded-xl border-2 border-black-900 px-2 cursor-pointer">Click to upload file</div>
-    <canvas id="canvas-origin" class=""></canvas>
+    <canvas id="canvas-origin" class="items-center"></canvas>
     <p id="origin-img-name" class=""></p>
     </div>
     <div class="flex gap-x-4">
@@ -50,7 +50,11 @@
       <canvas id="AnimationImg" class="mb-4 hidden"></canvas>
       <canvas id="dotAnimationImg" class="mb-4 hidden"></canvas>
 
-    <footer></footer>
+      <footer class="flex items-center justify-center w-full p-4 md:p-8 gap-x-4 md:gap-x-10 gap-y-4 text-gray-500">
+        <a href="https://twitter.com/taiga98" class="">twitter</a>
+        <a href="https://github.com/tiger9810/SlothAnimation" class="">Github</a>
+        <a href="https://sloth-nft.life/" class="">Sloth</a>
+      </footer>
   </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.3/pako.min.js"></script>
     <script src="https://unpkg.com/upng-js@2.1.0/UPNG.js"></script>
